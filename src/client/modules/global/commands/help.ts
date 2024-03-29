@@ -52,7 +52,22 @@ export default class HelpCommand extends BaseCommand {
 					])
 				});
 			} else if (discordClient.modules.find(m => m.commands.has(name))?.commands.find(c => c.name === name || c.alias.includes(name))) {
+				const command = discordClient.modules.find(m => m.commands.has(name))?.commands.find(c => c.name === name || c.alias.includes(name));
 
+				embed.setTitle(`Command ${command?.name}`);
+				embed.setDescription(`Description: ${command?.description}`);
+				if (command?.alias && command.alias.length > 0) embed.addFields([{name: `Aliases`, value: `-${command.alias.join('\n-')}`}]);
+				if (command?.arguments && command.arguments.size > 0) {
+					let str = "If the name is bold, then it is required.\n";
+					command.arguments.forEach(arg => {
+						str += `- ${arg.require ? '**' : ""}${arg.name}${arg.require ? '**' : ''} [Type: ${arg.type}]: ${arg.description} ${arg.default ? `(Default: ${arg.default})` : ''}\n`;
+					});
+
+					embed.addFields([{name: `Arguments`, value: str}]);
+				}
+			} else {
+				embed.setTitle(`Could not find module/command called ${name}`);
+				embed.setDescription(`This could be either a spelling error, the module/command doesn't actually exist, was removed, or was forgot to be enabled by my creator 😅! Happens often!`);
 			}
 		}
 
