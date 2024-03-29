@@ -10,7 +10,7 @@ export default class ReadyEvent extends BaseEvent {
 	}
 
 	public async invoke() {
-		const logger = new Logger('client:global:event:ready');
+		const logger = new Logger('ready event');
 		logger.info(`Client is ready!`);
 	}
 }

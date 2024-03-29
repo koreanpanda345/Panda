@@ -1,6 +1,8 @@
-import CommandContext from './CommandContext';
+import SlashCommandContext from './SlashCommandContext';
+import MessageCommandContext from './MessageCommandContext';
 // Barrel File
 
 export {
-	CommandContext,
+	SlashCommandContext,
+	MessageCommandContext
 }

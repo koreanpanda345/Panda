@@ -1,5 +1,6 @@
 import { discordClient, DiscordClient } from './discordClient';
 import { FilePaths } from './constants';
+import { handleMessageCommand } from './utils';
 
 export {
 	// Client
@@ -10,4 +11,5 @@ export {
 	FilePaths,
 
 	// Utils
+	handleMessageCommand,
 }

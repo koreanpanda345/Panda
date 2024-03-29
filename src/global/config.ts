@@ -3,8 +3,10 @@ export default class Config {
 	public static readonly workspaceState: string = process.env.WORKSPACE_STATE || "PRODUCTION";
 	// Discord Configurations
 	public static readonly discordClientToken: string = process.env.DISCORD_CLIENT_TOKEN || "NO TOKEN";
+	public static readonly discordClientPrefix: string = process.env.DISCORD_CLIENT_PREFIX || "p!";
 
 	// Database Configurations
+	public static readonly databaseURI: string = process.env.MONGODB_CONNECT_URI || "NO DATABASE URL";
 
 	// Webserver Configurations
 	public static readonly webserverPort: number = Number(process.env.WEBSERVER_PORT) || 8000;

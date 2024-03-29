@@ -1,6 +1,6 @@
 import { CommandInteraction, CommandInteractionOptionResolver, InteractionReplyOptions, MessageCreateOptions, MessagePayload, MessageReplyOptions } from "discord.js";
 
-export default class CommandContext {
+export default class SlashCommandContext {
 	private _interaction: CommandInteraction;
 	private _args: CommandInteractionOptionResolver;
 
