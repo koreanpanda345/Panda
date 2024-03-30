@@ -22,7 +22,7 @@ export default class HelpCommand extends BaseCommand {
 
 	public async invoke(ctx: MessageCommandContext) {
 		const embed = new EmbedBuilder();
-		if (ctx.args.length === 0) {
+		if (ctx.args.size === 0) {
 			embed.setTitle(`Help Command`);
 			embed.setDescription(`To view info for a specific module or command, just reuse this command and add the name of the module or command.\nexample: \`p!help economy\` \`p!help kick\``);
 			discordClient.modules.forEach(module => {
@@ -31,7 +31,7 @@ export default class HelpCommand extends BaseCommand {
 				]);
 			});
 		} else {
-			const name = ctx.args[0];
+			const name = ctx.args.get('module/command');
 			if (discordClient.modules.has(name)) {
 				const mod = discordClient.modules.get(name);
 

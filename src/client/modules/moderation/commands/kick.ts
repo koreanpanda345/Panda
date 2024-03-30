@@ -19,6 +19,7 @@ export default class KickCommand extends BaseCommand {
 				type: 'text',
 				description: 'The reason to kick',
 				default: 'No reason was provided!',
+				remaining: true,
 			})
 		});
 	}
@@ -32,8 +33,7 @@ export default class KickCommand extends BaseCommand {
 		}
 
 		let user = ctx.msg.mentions.users.at(0);
-		let currentArgs = ctx.args;
-		currentArgs.shift();
+		let reason = ctx.args.get('reason');
 		let member = await ctx.msg.guild!.members.fetch(user!.id);
 
 		if (!member) {
@@ -55,13 +55,13 @@ export default class KickCommand extends BaseCommand {
 			embed.setDescription(`User ${user} could not be kicked! It seems like they are not kickable`);
 			embed.addFields([
 				{name: "Was kicked by", value: `${ctx.msg.author}`},
-				{name: 'Reason', value: `${ctx.args.length > 1 ? currentArgs.join(" ") : "No reason was provided!"}`}
+				{name: 'Reason', value: `${reason}`}
 			]);
 
 			await ctx.sendMessageToChannel({
 				embeds: [embed],
 			});
-			await discordClient.modules.get('logging')?.monitors.get('logs_moderation_kick')?.invoke(member, ctx.msg.member, ctx.msg.guildId, `${ctx.args.length > 1 ? currentArgs.join(" ") : "No reason was provided!"}`, false, "The user is not kickable!");
+			await discordClient.modules.get('logging')?.monitors.get('logs_moderation_kick')?.invoke(member, ctx.msg.member, ctx.msg.guildId, reason, false, "The user is not kickable!");
 			return;
 		}
 
@@ -79,14 +79,14 @@ export default class KickCommand extends BaseCommand {
 		embed.setDescription(`User ${user} was kicked from the server!`);
 		embed.addFields([
 			{name: "Was kicked by", value: `${ctx.msg.author}`},
-			{name: 'Reason', value: `${ctx.args.length > 1 ? currentArgs.join(" ") : "No reason was provided!"}`}
+			{name: 'Reason', value: `${reason}`}
 		]);
 
 		await ctx.sendMessageToChannel({
 			embeds: [embed],
 		});
 
-		await discordClient.modules.get('logging')?.monitors.get('logs_moderation_kick')?.invoke(member, ctx.msg.member, ctx.msg.guildId, `${ctx.args.length > 1 ? currentArgs.join(" ") : "No reason was provided!"}`, true);
+		await discordClient.modules.get('logging')?.monitors.get('logs_moderation_kick')?.invoke(member, ctx.msg.member, ctx.msg.guildId, `${reason}`, true);
 		
 	}
 }

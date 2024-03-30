@@ -14,13 +14,14 @@ export async function handleMessageCommand(message: Message, mod: string) {
 			if (message.content.startsWith(Config.discordClientPrefix)) {
 				let args = message.content.replace(Config.discordClientPrefix, "").split(" ");
 				let commandName = args.shift();
-				let ctx = new MessageCommandContext(message, args);
+				
 	
 				const command = discordClient.getCommandFromMod(mod, commandName!);
 	
 				if (!command) {
 					return;
 				}
+				let ctx = new MessageCommandContext(message, args, command);
 				if (mod !== 'settings') {
 					if(!await hasSettings(message.guildId!)) {
 						await createSettings(message.guildId!);

@@ -39,4 +39,5 @@ export type BaseCommandArgumentOptions = {
 	description?: string,
 	default?: string,
 	require?: boolean,
+	remaining?: boolean,
 }
