@@ -7,6 +7,7 @@ export interface IServerSettings {
 		economy: boolean;
 		moderation: boolean;
 		logging: boolean;
+		leveling: boolean;
 	}
 }
 
@@ -17,6 +18,7 @@ const ServerSettingsSchema = new Schema<IServerSettings>({
 		economy: Boolean,
 		moderation: Boolean,
 		logging: Boolean,
+		leveling: Boolean,
 	}
 });
 

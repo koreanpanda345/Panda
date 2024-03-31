@@ -61,7 +61,7 @@ export default class KickCommand extends BaseCommand {
 			await ctx.sendMessageToChannel({
 				embeds: [embed],
 			});
-			await discordClient.modules.get('logging')?.monitors.get('logs_moderation_kick')?.invoke(member, ctx.msg.member, ctx.msg.guildId, reason, false, "The user is not kickable!");
+			await discordClient.cache.modules.get('logging')?.monitors.get('logs_moderation_kick')?.invoke(member, ctx.msg.member, ctx.msg.guildId, reason, false, "The user is not kickable!");
 			return;
 		}
 
@@ -86,7 +86,7 @@ export default class KickCommand extends BaseCommand {
 			embeds: [embed],
 		});
 
-		await discordClient.modules.get('logging')?.monitors.get('logs_moderation_kick')?.invoke(member, ctx.msg.member, ctx.msg.guildId, `${reason}`, true);
+		await discordClient.cache.modules.get('logging')?.monitors.get('logs_moderation_kick')?.invoke(member, ctx.msg.member, ctx.msg.guildId, `${reason}`, true);
 		
 	}
 }

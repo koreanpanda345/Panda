@@ -4,45 +4,62 @@ import Config from "../../global/config";
 import { discordClient } from "./discordClient";
 import { Logger } from "../../logger";
 import { ServerSettings } from "../../database/models/settings";
-import { createSettings, getSettings, hasSettings } from "../modules/settings/utils";
+import {
+  createSettings,
+  getSettings,
+  hasSettings,
+} from "../modules/settings/utils";
+import { ModuleTypes } from "../types";
+const logger = new Logger("client:utils");
+export async function handleGuard(mod: string, name: string, ...args: any[]) {
+  try {
+    logger.debug(`Executing Guard ${name}!`);
+
+    const guard = discordClient.cache.getGuardFromMod(mod, name);
+
+    if (!guard) {
+      return true;
+    }
+
+    const result = await guard.invoke(...args);
+
+    if (!result) {
+      await guard.failed(...args);
+      return false;
+    } else return true;
+  } catch (error) {
+    logger.error(`Something happened when executing the guard!`);
+    console.debug(error);
+    return false;
+  }
+}
+
+export async function handleMonitor(mod: string, name: string, ...args: any[]) {
+	try {
+		logger.debug(`Executing Monitor ${name}`);
+		const module = discordClient.cache.modules.get(mod)!;
+		await module.execute(`monitor:${name}`, ...args);
+	} catch (error) {
+		logger.error(`Something happened when executing the monitor!`);
+		console.debug(error);
+		return false;
+	}
+}
 
 export async function handleMessageCommand(message: Message, mod: string) {
-	const logger = new Logger('client:utils');
-	try {
+  try {
+    if (message.author.bot) return;
+    if (message.content.startsWith(Config.discordClientPrefix)) {
+      let args = message.content
+        .replace(Config.discordClientPrefix, "")
+        .split(" ");
+      const module = discordClient.cache.modules.get(mod)!;
 
-		if (message.author.bot) return;
-			if (message.content.startsWith(Config.discordClientPrefix)) {
-				let args = message.content.replace(Config.discordClientPrefix, "").split(" ");
-				let commandName = args.shift();
-				
-	
-				const command = discordClient.getCommandFromMod(mod, commandName!);
-	
-				if (!command) {
-					return;
-				}
-				let ctx = new MessageCommandContext(message, args, command);
-				if (mod !== 'settings') {
-					if(!await hasSettings(message.guildId!)) {
-						await createSettings(message.guildId!);
-					}
-	
-					const settings = await getSettings(message.guildId!);
-	
-					if (!settings!.modules[`${mod as 'economy' | 'global' | 'moderation'}`]) {
-						await ctx.sendMessageToChannel({content: `This server has the module ${mod} disabled! You sadly can not use this command in this server.`});
-						return;
-					}
-				}
-
-	
-				await command.invoke(ctx);
-				logger.debug(`[(Mod ${mod}) Command ${command.name}] was executed!`);
-			}
-	} catch (error) {
-		logger.error(`Something happened to the command`);
-		console.error(error);
-		return null;
-	}
-
+      await module.execute(`command:${args.shift()!}`, message);
+    }
+  } catch (error) {
+    logger.error(`Something happened to the command`);
+    console.error(error);
+    return null;
+  }
 }

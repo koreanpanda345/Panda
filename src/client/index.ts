@@ -4,7 +4,7 @@ import { discordClient } from "./core";
 
 const logger = new Logger("client");
 (async () => {
-	['settings', 'global', 'economy', 'moderation', 'logging'].forEach(async x => await discordClient.addModule(x));
+	['settings', 'global', 'economy', 'moderation', 'logging', 'leveling'].forEach(async x => await discordClient.cache.addModule(x));
 
   if (Config.discordClientToken === "NO TOKEN") {
     logger.error(

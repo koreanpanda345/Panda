@@ -22,18 +22,19 @@ export default class HelpCommand extends BaseCommand {
 
 	public async invoke(ctx: MessageCommandContext) {
 		const embed = new EmbedBuilder();
-		if (ctx.args.size === 0) {
+		const name = ctx.args.get('module/command');
+		if (name === null) {
 			embed.setTitle(`Help Command`);
 			embed.setDescription(`To view info for a specific module or command, just reuse this command and add the name of the module or command.\nexample: \`p!help economy\` \`p!help kick\``);
-			discordClient.modules.forEach(module => {
+			discordClient.cache.modules.forEach(module => {
 				embed.addFields([
 					{name: `${module.name}`, value: `Description: ${module.description}\nAmount of Commands: ${module.commands.size}`},
 				]);
 			});
 		} else {
-			const name = ctx.args.get('module/command');
-			if (discordClient.modules.has(name)) {
-				const mod = discordClient.modules.get(name);
+			
+			if (discordClient.cache.modules.has(name)) {
+				const mod = discordClient.cache.modules.get(name);
 
 				embed.setTitle(`${mod?.name} Module`);
 				embed.setDescription(`Description: ${mod?.description}\nAmount of Commands: ${mod?.commands.size}`);
@@ -51,8 +52,8 @@ export default class HelpCommand extends BaseCommand {
 						{name: `${command.name}`, value: str}
 					])
 				});
-			} else if (discordClient.modules.find(m => m.commands.has(name))?.commands.find(c => c.name === name || c.alias.includes(name))) {
-				const command = discordClient.modules.find(m => m.commands.has(name))?.commands.find(c => c.name === name || c.alias.includes(name));
+			} else if (discordClient.cache.modules.find(m => m.commands.has(name))?.commands.find(c => c.name === name || c.alias.includes(name))) {
+				const command = discordClient.cache.modules.find(m => m.commands.has(name))?.commands.find(c => c.name === name || c.alias.includes(name));
 
 				embed.setTitle(`Command ${command?.name}`);
 				embed.setDescription(`Description: ${command?.description}`);
