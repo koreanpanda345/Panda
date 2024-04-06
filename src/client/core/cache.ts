@@ -15,35 +15,64 @@ import { discordClient } from "./discordClient";
 export class Cache {
   private _logger = new Logger("client:cache");
   public readonly modules: Collection<string, BaseModule> = new Collection();
+  public readonly locations:Collection<string, string> = new Collection();
 
-  public getCommandFromMod(mod: string, name: string) {
-    if (!this.modules.has(mod)) {
-      this._logger.error(
-        `[Mod ${mod}] doesn't seem to exist in the collector!`
-      );
-      return null;
-    }
-    return this.modules
-      .get(mod)
-      ?.commands.find((c) => c.name === name || c.alias.includes(name));
-  }
-  public getGuardFromMod(mod: string, name: string) {
-    if (this.modules.has(mod)) {
-      this._logger.error(
-        `[Mod ${mod}] doesn't seem to exist in the collector!`
-      );
-      return null;
-    }
-
-    return this.modules.get(mod)?.guards.get(name);
-  }
-  public getMonitorFromMod(mod: string, name: string) {
-	if (!this.modules.has(mod)) {
-		this._logger.error(`[Mod ${mod}] doesn't seem to exist in the collector!`);
+  public getModule(name: string) {
+	if(!this.modules.has(name)) {
+		this._logger.error(`[Module ${name}] doesn't seem to exist!`);
 		return null;
 	}
 
-	return this.modules.get(mod)?.monitors.get(name);
+	return this.modules.get(name)!;
+  }
+  /**
+   * Checks if the command can be loaded or not.
+   * @param command The command to be checked.
+   */
+  public checkCommand(command: BaseCommand) {
+	let pass = true;
+	this.modules.forEach((module) => {
+		// Check name first
+		if (module.commands.find((c) => c.name === command.name || c.alias.includes(command.name))) {
+			this._logger.error(`- Shares the same name as [Mod ${module.name}] [Command ${module.commands.find((c) => c.name === command.name || c.alias.includes(command.name))}]`);
+			pass = false;
+		}
+		if (command.alias && command.alias.length > 0) {
+			command.alias.forEach((alias) => {
+				if (module.commands.find((c) => c.name === alias && c.alias.includes(alias))) {
+					this._logger.error(`- Alias ${alias} shares the same name as [Mod ${module.name}] [Command ${module.commands.find((c) => c.name === alias || c.alias.includes(alias))}]`);
+					pass = false;
+				}
+			});
+		}
+	});
+
+	return pass;
+  }
+
+  public getCommand(name: string) {
+	if (!this.locations.has(`command:${name}`)) {
+		this._logger.error(`[Command ${name}] doesn't seem to have a location!`);
+		return null;
+	}
+
+	return this.modules.get(this.locations.get(`command:${name}`)!)?.commands.find((c) => c.name === name || c.alias.includes(name));
+  }
+  public getGuard(name: string) {
+	if (!this.locations.has(`guard:${name}`)) {
+		this._logger.error(`[Guard ${name}] doesn't seem to have a location!`);
+		return null;
+	}
+
+	return this.modules.get(this.locations.get(`guard:${name}`)!)?.guards.get(name);
+  }
+  public getMonitor(name: string) {
+	if (!this.locations.has(`monitor:${name}`)) {
+		this._logger.error(`[Monitor ${name}] doesn't seem to have a location!`);
+		return null;
+	}
+
+	return this.modules.get(this.locations.get(`monitor:${name}`)!)?.monitors.get(name);
   }
 
   public async addModule(name: string) {
@@ -167,6 +196,8 @@ export class Cache {
       this._logger.error(`[(Mod ${mod}) Command ${command.name}] [SKIPPED]`);
     } else {
       this.modules.get(mod)?.commands.set(command.name, command);
+	  this.locations.set(`command:${command.name}`, mod);
+	  if (command.alias && command.alias.length > 0) command.alias.forEach((a) => this.locations.set(`command:${a}`, mod));
       this._logger.info(`[(Mod ${mod}) Command ${command.name}] [LOADED]`);
     }
   }
@@ -181,6 +212,7 @@ export class Cache {
       this._logger.error(`[(Mod ${mod}) Event ${event.name}] [SKIPPED]`);
     } else {
       this.modules.get(mod)?.events.set(event.name, event);
+	  this.locations.set(`event:${event.name}`, mod);
       if (event.onlyOnce)
         discordClient.once(
           event.name,
@@ -214,6 +246,7 @@ export class Cache {
       this._logger.error(`[(Mod ${mod}) Guard ${guard.name}] [SKIPPED]`);
     } else {
       this.modules.get(mod)?.guards.set(guard.name, guard);
+	  this.locations.set(`guard:${guard.name}`, mod);
       this._logger.info(`[(Mod ${mod}) Guard ${guard.name}] [LOADED]`);
     }
   }
@@ -237,6 +270,7 @@ export class Cache {
       this._logger.error(`[(Mod ${mod}) Monitor ${monitor.name}] [SKIPPED]`);
     } else {
       this.modules.get(mod)?.monitors.set(monitor.name, monitor);
+	  this.locations.set(`monitor:${monitor.name}`, mod);
       this._logger.info(`[(Mod ${mod}) Monitor ${monitor.name}] [LOADED]`);
     }
   }
@@ -260,6 +294,7 @@ export class Cache {
       this._logger.error(`[(Mod ${mod}) Task ${task.name}] [SKIPPED]`);
     } else {
       this.modules.get(mod)?.tasks.set(task.name, task);
+	  this.locations.set(`task:${task.name}`, mod);
       this._logger.info(`[(Mod ${mod}) Task ${task.name}] [LOADED]`);
     }
   }

@@ -1,1 +1,1 @@
-export type ModuleTypes = 'global' | 'moderation' | 'economy';
+export type ModuleTypes = 'global' | 'moderation' | 'economy' | 'leveling' | 'settings';
