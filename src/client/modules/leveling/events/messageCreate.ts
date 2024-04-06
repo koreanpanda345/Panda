@@ -13,7 +13,6 @@ export default class MessageCreateEvent extends BaseEvent {
 	}
 
 	public async invoke(message: Message) {
-		if (message.author.bot) return;
 		await handleMessageCommand(message, 'leveling');
 		await handleMonitor('leveling', 'exp_monitor', message);
 	}

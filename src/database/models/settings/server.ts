@@ -8,7 +8,6 @@ export interface IServerSettings {
 		moderation: boolean;
 		logging: boolean;
 		leveling: boolean;
-		settings: boolean;
 	}
 }
 
@@ -20,7 +19,6 @@ const ServerSettingsSchema = new Schema<IServerSettings>({
 		moderation: Boolean,
 		logging: Boolean,
 		leveling: Boolean,
-		settings: Boolean,
 	}
 });
 
