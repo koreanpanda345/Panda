@@ -17,27 +17,11 @@ const logger = createLogger({
 if (Bun.env.NODE_ENV !== 'production') {
 	logger.add(new transports.Console({
 		format:combine(
-			label({ label: 'client'}),
+			label({ label: 'bot'}),
 			timestamp(),
 			consoleFormat,
 		)
 	}))
 }
-
-// const logger = winston.createLogger({
-// 	level: 'debug',
-// 	format: winston.format.json(),
-// 	defaultMeta: { class: 'client'},
-// 	transports: [
-// 		new winston.transports.File({ filename: 'logs/error.log', level: 'error'}),
-// 		new winston.transports.File({filename: 'logs/combined.log'}),
-// 	]
-// });
-
-// if (Bun.env.NODE_ENV !== 'production') {
-// 	logger.add(new winston.transports.Console({
-// 		format: winston.format.simple(),
-// 	}));
-// }
 
 export default logger;

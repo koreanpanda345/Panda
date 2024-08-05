@@ -85,6 +85,12 @@ export default abstract class BaseModule {
     let command = this.files.commands.get(name);
 
     if (!command) return false;
+    let precondition = await command.precondition(ctx);
+
+    if (!precondition)
+      return await ctx.interaction.reply({
+        embeds: [await command.preconditionError(ctx)],
+      });
 
     await command.invoke(ctx);
   }
