@@ -1,28 +1,11 @@
 {
-  "name": "Panda",
-  "version": "1.0.0",
-  "main": "dist/index.js",
-  "author": "Cody Spratford <koreanpanda345@gmail.com>",
-  "license": "MIT",
-  "scripts": {
-	"start": "yarn build && node .",
-    "start:dev": "nodemon src/index.ts",
-	"build": "yarn tsc"
-  },
-  "dependencies": {
-    "@types/express": "^4.17.21",
-    "discord.js": "^14.14.1",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "glob": "^10.3.12",
-    "mongoose": "^8.2.4",
-    "winston": "^3.13.0"
-  },
+  "name": "panda",
+  "module": "index.ts",
+  "type": "module",
   "devDependencies": {
-    "@types/glob": "^8.1.0",
-    "@types/node": "^20.11.30",
-    "nodemon": "^3.1.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.4.3"
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
   }
 }

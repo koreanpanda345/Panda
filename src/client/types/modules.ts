@@ -1,1 +1,0 @@
-export type ModuleTypes = 'global' | 'moderation' | 'economy';
