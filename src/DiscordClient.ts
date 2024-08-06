@@ -60,7 +60,7 @@ export default class DiscordClient extends Client {
             async (...args: any[]) => await event.invoke(...args)
           );
         else
-          this.once(
+          this.on(
             event.configurations.eventName,
             async (...args: any[]) => await event.invoke(...args)
           );

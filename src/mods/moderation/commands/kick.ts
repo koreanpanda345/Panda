@@ -2,51 +2,41 @@ import { EmbedBuilder } from "discord.js";
 import BaseCommand from "../../../base/BaseCommand";
 import type SlashCommandContext from "../../../context/SlashCommandContext";
 
-export default class BanCommand extends BaseCommand {
+export default class KickCommand extends BaseCommand {
   constructor() {
-    super("ban", "Ban a member", (data) => {
-      data.addUserOption((opt) => {
-        opt.setName("user");
-        opt.setDescription("The user that you would like to ban");
-        opt.setRequired(true);
-        return opt;
-      });
-      data.addStringOption((opt) => {
-        opt.setName("reason");
-        opt.setDescription("The reason why the user is being banned");
-        return opt;
-      });
+    super("kick", "Kicks a member", (data) => {
+      data.addUserOption((opt) =>
+        opt
+          .setName("user")
+          .setDescription("The user to kick form the server")
+          .setRequired(true)
+      );
+      data.addStringOption((opt) =>
+        opt.setName("reason").setDescription("Reason for the kick.")
+      );
       return data;
     });
   }
 
   public async invoke(ctx: SlashCommandContext) {
-    let guild = await fetch(
-      `http://localhost:3000/api/configurations/${ctx.interaction.guildId}`,
-      {
-        headers: { User: Bun.env.WEBSERVER_IDENTITY as string },
-      }
-    );
-    let user = ctx.args.getUser("user");
+	let user = ctx.args.getUser("user");
     let reason = ctx.args.getString("reason") || "No reason was provided";
     let member = await ctx.interaction.guild?.members.fetch(
-      ctx.interaction.user.id
+      user!.id
     );
 
-    if (!member?.bannable) {
+    if (!member?.kickable) {
       await ctx.interaction.reply(
         `${member} can not be ban from the server. This either means they have a role that is higher than mine, or they have the administrator permissions.`
       );
       return;
     }
 
-    await member.ban({
-      reason: reason,
-    });
+    await member.kick(reason);
 
     let embed = new EmbedBuilder();
 
-    embed.setTitle(`Ban a Member`);
+    embed.setTitle(`Kick a Member`);
     embed.setAuthor({
       name: `${member.displayName}`,
       iconURL: member.displayAvatarURL(),
@@ -64,7 +54,7 @@ export default class BanCommand extends BaseCommand {
       ctx.interaction.user.id
     );
 
-    if (!member?.permissions.has("BanMembers")) return false;
+    if (!member?.permissions.has("KickMembers")) return false;
     else if (!member?.permissions.has("Administrator")) return false;
     else return true;
   }

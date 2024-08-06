@@ -7,7 +7,6 @@ export default interface BaseEvent {
     disabled?: boolean;
 	onlyOnce: boolean;
   };
-
   invoke(...args: any[]): Promise<unknown>;
 }
 
@@ -23,7 +22,7 @@ export default abstract class BaseEvent {
 	};
   }
 
-  public async invoke() {
+  public async invoke(...args: any[]) {
 	throw "Not yet implemented";
   }
 }
